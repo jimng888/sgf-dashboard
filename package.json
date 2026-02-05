@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "description": "Team dashboard: system status, Google login, ticket assignment (Bot vs team members)",
   "private": true,
-  "engines": { "node": ">=18.0.0" },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "start": "node server.js",
-    "build:worker": "node scripts/embed-worker-assets.js"
+    "build:worker": "node scripts/embed-worker-assets.js",
+    "deploy:worker": "cd worker && npm ci && npx wrangler deploy"
   },
   "dependencies": {
     "better-sqlite3": "^11.6.0",
@@ -15,6 +18,7 @@
     "express": "^4.21.0",
     "express-session": "^1.18.0",
     "passport": "^0.7.0",
-    "passport-google-oauth20": "^2.0.0"
+    "passport-google-oauth20": "^2.0.0",
+    "hono": "^4.6.0"
   }
 }

@@ -1,0 +1,10 @@
+# Cloudflare Workers config for SGF Team Dashboard (built from worker/)
+name = "sgf-dashboard"
+main = "worker.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "sgf-dashboard-db"
+database_id = "6b51f2f4-ae87-49ee-bdd4-73b4a0ff0ce6"

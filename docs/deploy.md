@@ -37,10 +37,12 @@ Push to GitHub → Railway deploys → live at your subdomain.
 
 ## Full Cloudflare Workers (push → Cloudflare → domain)
 
-To host on Cloudflare so **push to Git** deploys and you can **debug on Cloudflare with a domain**:
+To host on Cloudflare so **push to Git** deploys:
 
-1. See **[docs/cloudflare-like-a-kid.md](cloudflare-like-a-kid.md)** for a simple step-by-step (GitHub → Cloudflare → domain, in plain language).
-2. The app must first be adapted to run on Workers (D1 instead of SQLite). The repo has `wrangler.toml`, `schemas/d1-schema.sql`, and a placeholder `worker.js`; the full migration is a separate change (see [Cloudflare: Deploy Express on Workers](https://developers.cloudflare.com/workers/tutorials/deploy-an-express-app/)).
+1. See **[docs/cloudflare-like-a-kid.md](cloudflare-like-a-kid.md)** for step-by-step (GitHub → Cloudflare → domain).
+2. **Build command** in Cloudflare: **`cd worker && npm ci && npx wrangler deploy`**  
+   The `worker/` directory has its own `package.json` with **only** Hono and EJS (no Express). The deploy runs from there, so the bundle cannot include `body-parser`/`iconv-lite`. After changing `views/` or `public/`, run `npm run build:worker` at repo root and commit the updated `worker/lib/` files.
+3. Optional: use **`npm run deploy:worker`** from repo root (same as the command above).
 
 ---
 
