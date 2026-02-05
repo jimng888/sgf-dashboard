@@ -6,12 +6,10 @@ main = "worker.js"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 
-# Optional: when you add a D1 database for the full app, uncomment and set database_id:
-# 1. In Cloudflare: Workers & Pages → D1 → Create database (e.g. sgf-dashboard-db)
-# 2. Copy the database ID from the summary
-# 3. Uncomment the block below and paste the real database_id
+# D1: create the database in THIS Cloudflare account (Workers & Pages → D1 → Create database),
+# then copy its Database ID and uncomment + fill the block below. The ID must be from the same account.
 #
- [[d1_databases]]
- binding = "DB"
- database_name = "sgf-dashboard-db"
- database_id = "96adecc6-729e-4541-b4ef-0761d2776a62"
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "sgf-dashboard-db"
+# database_id = "paste-new-account-database-id-here"
