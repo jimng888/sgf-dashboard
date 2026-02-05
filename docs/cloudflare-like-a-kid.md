@@ -12,7 +12,7 @@ Here’s how that works and what to do, step by step.
 - **GitHub** = A website where that saved code lives on the internet. Other services (like Cloudflare) can look at it.
 - **Push** = You send your latest code from your computer to GitHub. So the “box” on GitHub has the newest version.
 - **Cloudflare** = A place that can **run** your app on the internet. It can watch your GitHub box and, when you push, **rebuild and run** your app.
-- **Domain** = The address people type (e.g. `internal.singaporeflorist.com.sg`). You attach this to your app on Cloudflare so the app is reachable at that address.
+- **Domain** = The address people type (e.g. `sgf.bestmarketing.com.sg`). You attach this to your app on Cloudflare so the app is reachable at that address.
 - **Debug on Cloudflare** = You use the Cloudflare dashboard to see logs, see if the app is running, and change settings (secrets, domain, etc.).
 
 So the flow is:
@@ -100,7 +100,7 @@ Your app needs things like Google login keys and a secret. You don’t put these
    - **ALLOWED_GOOGLE_EMAILS** = e.g. `jim@bestmarketing.com.sg,hello@singaporeflorist.com.sg`
    - **SESSION_SECRET** = a long random string (e.g. from `openssl rand -hex 32`)
 
-Replace **YOUR-DOMAIN** with the domain you’ll use (e.g. `internal.singaporeflorist.com.sg`).  
+Replace **YOUR-DOMAIN** with the domain you’ll use (e.g. `sgf.bestmarketing.com.sg`).  
 After you add the domain in Step 4, you can come back and set **GOOGLE_CALLBACK_URL** to the exact URL if needed.
 
 ---
@@ -109,12 +109,12 @@ After you add the domain in Step 4, you can come back and set **GOOGLE_CALLBACK_
 
 1. In the same Worker in Cloudflare, go to **Settings** → **Domains & Routes** (or **Triggers** → **Custom Domains**).
 2. Click **“Add”** or **“Add custom domain”**.
-3. Type your domain, e.g. **`internal.singaporeflorist.com.sg`**, and save.
+3. Type your domain, e.g. **`sgf.bestmarketing.com.sg`**, and save.
 4. Cloudflare will tell you to add a **CNAME** in your DNS (where you manage your domain). Add:
-   - **Name:** `internal` (or whatever makes your full domain `internal.singaporeflorist.com.sg`)
+   - **Name:** `sgf` (so the full domain is `sgf.bestmarketing.com.sg`)
    - **Target:** the hostname Cloudflare shows (often something like `sgf-team-dashboard.workers.dev` or a target they give you).
 
-After DNS updates (a few minutes), when people go to **https://internal.singaporeflorist.com.sg**, they’ll get your app. That’s “domain attached directly” to your Worker.
+After DNS updates (a few minutes), when people go to **https://sgf.bestmarketing.com.sg**, they’ll get your app. That’s “domain attached directly” to your Worker.
 
 ---
 
@@ -122,9 +122,9 @@ After DNS updates (a few minutes), when people go to **https://internal.singapor
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/apis/credentials) → your **OAuth client**.
 2. Under **Authorized JavaScript origins**, add:  
-   `https://internal.singaporeflorist.com.sg`
+   `https://sgf.bestmarketing.com.sg`
 3. Under **Authorized redirect URIs**, add:  
-   `https://internal.singaporeflorist.com.sg/auth/google/callback`
+   `https://sgf.bestmarketing.com.sg/auth/google/callback`
 4. Save.
 
 Now “Sign in with Google” will work on your Cloudflare domain.

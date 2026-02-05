@@ -1,21 +1,24 @@
 /**
- * Minimal Cloudflare Worker entry. Returns a placeholder.
- * The full dashboard (Express + SQLite) runs on Node/Railway.
- * To run the full app on Workers you need to migrate to D1 + Express-on-Workers
- * (see DEPLOY-CLOUDFLARE.md and https://developers.cloudflare.com/workers/tutorials/deploy-an-express-app/).
+ * Cloudflare Worker entry: runs the full Express dashboard (D1 + Google OAuth).
+ * Build: run "node scripts/embed-worker-assets.js" then deploy.
  */
+import { createServer } from 'node:http';
+import { handleAsNodeRequest } from 'cloudflare:node';
+import { createApp } from './app-worker.mjs';
+
 export default {
   async fetch(request, env, ctx) {
-    const url = new URL(request.url);
-    if (url.pathname === '/' || url.pathname === '/health') {
-      return new Response(
-        JSON.stringify({
-          ok: true,
-          message: 'SGF Team Dashboard Worker (placeholder). For full app, use Railway or migrate to D1 + Express.',
-        }),
-        { headers: { 'Content-Type': 'application/json' }, status: 200 }
-      );
+    const app = createApp(env);
+    const server = createServer(app);
+    await new Promise((resolve, reject) => {
+      server.listen(0, () => resolve());
+      server.on('error', reject);
+    });
+    const port = server.address().port;
+    try {
+      return await handleAsNodeRequest(port, request);
+    } finally {
+      server.close();
     }
-    return new Response('Not Found', { status: 404 });
   },
 };

@@ -15,7 +15,7 @@ Open **http://localhost:3851**. Add `http://localhost:3851` and `http://localhos
 ## Deploy to Railway
 
 1. Push the repo to GitHub. In [Railway](https://railway.app): **New project** → **Deploy from GitHub** → select repo.
-2. In the service: **Variables** — set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_CALLBACK_URL` (e.g. `https://internal.singaporeflorist.com.sg/auth/google/callback`), `ALLOWED_GOOGLE_EMAILS`, `SESSION_SECRET`, `NODE_ENV=production`.
+2. In the service: **Variables** — set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_CALLBACK_URL` (e.g. `https://sgf.bestmarketing.com.sg/auth/google/callback`), `ALLOWED_GOOGLE_EMAILS`, `SESSION_SECRET`, `NODE_ENV=production`.
 3. **Settings** → **Networking** → **Generate domain** (or add custom domain).
 4. In Google OAuth, add the production origin and redirect URI.
 

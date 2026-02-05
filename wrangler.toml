@@ -4,12 +4,13 @@
 name = "sgf-dashboard"
 main = "worker.js"
 compatibility_date = "2024-09-23"
-compatibility_flags = ["nodejs_compat"]
+compatibility_flags = ["nodejs_compat", "enable_nodejs_http_server_modules"]
 
-# D1: create the database in THIS Cloudflare account (Workers & Pages → D1 → Create database),
-# then copy its Database ID and uncomment + fill the block below. The ID must be from the same account.
+# D1: Create the database in this account (Workers & Pages → D1 → Create database).
+# Run: npx wrangler d1 execute sgf-dashboard-db --remote --file=./schemas/d1-schema.sql
+# Then uncomment the block below and set database_id to your database's ID.
 #
 # [[d1_databases]]
 # binding = "DB"
 # database_name = "sgf-dashboard-db"
-# database_id = "paste-new-account-database-id-here"
+# database_id = "your-d1-database-id-here"

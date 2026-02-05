@@ -5,7 +5,8 @@
   "private": true,
   "engines": { "node": ">=18.0.0" },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build:worker": "node scripts/embed-worker-assets.js"
   },
   "dependencies": {
     "better-sqlite3": "^11.6.0",

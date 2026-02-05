@@ -27,3 +27,10 @@ CREATE TABLE IF NOT EXISTS tickets (
 CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets(status);
 CREATE INDEX IF NOT EXISTS idx_tickets_assigned ON tickets(assigned_to_type, assigned_to_user_id);
 CREATE INDEX IF NOT EXISTS idx_tickets_updated ON tickets(updated_at DESC);
+
+CREATE TABLE IF NOT EXISTS sessions (
+  sid TEXT PRIMARY KEY,
+  session TEXT NOT NULL,
+  expires INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires);
