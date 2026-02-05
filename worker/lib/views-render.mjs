@@ -35,13 +35,14 @@ export function renderLogin(data) {
 }
 
 export function renderDashboard(data) {
-  const { user, status, tickets } = data;
+  const { user, status, tickets, openclawUrl = '', botEnabled = true } = data;
   const userName = esc(user?.name || user?.email || '');
   const statusClass = status?.live ? 'live' : 'down';
   const statusLabel = status?.live ? 'Live' : 'Down';
   const statusMessage = esc(status?.message || '');
   const sessionsCount = status?.sessionsCount;
   const userId = user?.id ?? '';
+  const showOpenclaw = openclawUrl && status?.live;
 
   const rows = (tickets || []).map((t) => {
     const assignedLabel = t.assigned_to_type === 'bot' ? 'Bot' : (t.assigned_to_name || t.assigned_to_email || 'Unknown');
@@ -112,6 +113,26 @@ export function renderDashboard(data) {
       </div>
       <p class="muted small">Status refreshes every 30s.</p>
     </section>
+
+    <section class="section bot-control-section">
+      <h2>Bot control</h2>
+      <p class="muted">Kill switch: turn the customer-facing bot off when you need to. When off, the bot will not process messages (if your gateway checks this dashboard).</p>
+      <div class="bot-toggle-wrap">
+        <button type="button" id="bot-toggle-btn" class="btn ${botEnabled ? 'btn-primary' : 'btn-ghost'}" data-enabled="${botEnabled ? '1' : '0'}">
+          ${botEnabled ? 'Bot is ON' : 'Bot is OFF'}
+        </button>
+        <span id="bot-toggle-status" class="muted small"></span>
+      </div>
+    </section>
+
+    ${showOpenclaw ? `
+    <section class="section openclaw-section">
+      <h2>OpenClaw</h2>
+      <p class="muted">Bot is ready. View sessions and send messages from the OpenClaw dashboard.</p>
+      <a href="${esc(openclawUrl)}" target="_blank" rel="noopener" class="btn btn-primary">Open OpenClaw dashboard</a>
+      <div id="openclaw-recent" class="openclaw-recent muted small" style="margin-top:1rem;"></div>
+    </section>
+    ` : ''}
 
     <section class="section">
       <h2>Tickets</h2>

@@ -127,6 +127,47 @@ export const appJs = `(function () {
     });
   });
 
+  function openclawRecent() {
+    var el = document.getElementById('openclaw-recent');
+    if (!el) return;
+    fetch('/api/openclaw/recent-messages?limit=8')
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .catch(function () { return []; })
+      .then(function (list) {
+        if (!list.length) { el.innerHTML = 'No recent messages.'; return; }
+        el.innerHTML = '<strong>Recent activity</strong>: ' + list.slice(0, 5).map(function (m) {
+          var who = m.role === 'user' ? 'User' : 'Bot';
+          var t = (m.text || '').slice(0, 60) + (m.text && m.text.length > 60 ? '…' : '');
+          return who + ': ' + t;
+        }).join(' · ');
+      });
+  }
+
+  var botBtn = document.getElementById('bot-toggle-btn');
+  if (botBtn) {
+    botBtn.addEventListener('click', function () {
+      var currentlyOn = botBtn.getAttribute('data-enabled') === '1';
+      var nextOn = !currentlyOn;
+      fetch('/api/settings/bot_enabled', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled: nextOn })
+      })
+        .then(function (r) {
+          if (r.ok) {
+            botBtn.setAttribute('data-enabled', nextOn ? '1' : '0');
+            botBtn.textContent = nextOn ? 'Bot is ON' : 'Bot is OFF';
+            botBtn.classList.toggle('btn-primary', nextOn);
+            botBtn.classList.toggle('btn-ghost', !nextOn);
+            var statusEl = document.getElementById('bot-toggle-status');
+            if (statusEl) statusEl.textContent = nextOn ? 'Bot will process messages.' : 'Bot is paused.';
+          }
+        })
+        .catch(function () { alert('Failed to update'); });
+    });
+  }
+
   setInterval(statusRefresh, 30000);
+  openclawRecent();
 })();
 `;

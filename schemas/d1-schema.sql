@@ -34,3 +34,10 @@ CREATE TABLE IF NOT EXISTS sessions (
   expires INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires);
+
+-- Kill switch and other app settings (bot_enabled: 1 = on, 0 = off)
+CREATE TABLE IF NOT EXISTS settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL
+);
+INSERT OR IGNORE INTO settings (key, value) VALUES ('bot_enabled', '1');

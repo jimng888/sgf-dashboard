@@ -77,6 +77,23 @@ function clearSessionCookie() {
   return `${SESSION_COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`;
 }
 
+async function getBotEnabled(db) {
+  if (!db) return true;
+  const row = await db.prepare('SELECT value FROM settings WHERE key = ?').bind('bot_enabled').first();
+  return row?.value !== '0';
+}
+
+async function setBotEnabled(db, enabled) {
+  if (!db) return;
+  await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value')
+    .bind('bot_enabled', enabled ? '1' : '0').run();
+}
+
+function getEffectiveOpenclawUrl(configUrl) {
+  if (!configUrl || configUrl.startsWith('http://127.0.0.1') || configUrl.startsWith('http://localhost')) return '';
+  return configUrl.replace(/\/$/, '');
+}
+
 async function fetchSystemStatus(configUrl) {
   // No OpenClaw URL configured: show dashboard as live so the app feels ready out of the box.
   if (!configUrl || configUrl.startsWith('http://127.0.0.1') || configUrl.startsWith('http://localhost')) {
@@ -165,7 +182,9 @@ export function createWorkerApp() {
     const config = getConfig(c.env);
     const status = await fetchSystemStatus(config.openclawUrl);
     const tickets = await listTickets(db);
-    return c.html(render('dashboard', { user, status, tickets }));
+    const openclawUrl = getEffectiveOpenclawUrl(config.openclawUrl);
+    const botEnabled = await getBotEnabled(db);
+    return c.html(render('dashboard', { user, status, tickets, openclawUrl, botEnabled }));
   });
 
   app.get('/login', async (c) => {
@@ -251,6 +270,51 @@ export function createWorkerApp() {
     const config = getConfig(c.env);
     const status = await fetchSystemStatus(config.openclawUrl);
     return c.json(status);
+  });
+
+  // Public: gateway (or any service) can poll this to respect the kill switch. No auth.
+  app.get('/api/bot-enabled', async (c) => {
+    const db = c.env.DB;
+    const enabled = await getBotEnabled(db);
+    return c.json({ enabled });
+  });
+
+  app.get('/api/settings/bot_enabled', requireAuth, async (c) => {
+    const enabled = await getBotEnabled(c.env.DB);
+    return c.json({ enabled });
+  });
+
+  app.patch('/api/settings/bot_enabled', requireAuth, async (c) => {
+    const body = await c.req.json().catch(() => ({}));
+    const enabled = body.enabled !== false && body.enabled !== '0';
+    await setBotEnabled(c.env.DB, enabled);
+    return c.json({ enabled });
+  });
+
+  app.get('/api/openclaw/dashboard-url', requireAuth, (c) => {
+    const config = getConfig(c.env);
+    const url = getEffectiveOpenclawUrl(config.openclawUrl);
+    return c.json({ url: url || null });
+  });
+
+  app.get('/api/openclaw/recent-messages', requireAuth, async (c) => {
+    const config = getConfig(c.env);
+    const baseUrl = getEffectiveOpenclawUrl(config.openclawUrl);
+    if (!baseUrl) return c.json([]);
+    const limit = Math.min(parseInt(c.req.query('limit') || '20', 10) || 20, 50);
+    try {
+      const res = await fetch(`${baseUrl}/api/recent-messages?limit=${limit}`, { signal: AbortSignal.timeout(8000) });
+      const text = await res.text();
+      let data;
+      try {
+        data = text ? JSON.parse(text) : [];
+      } catch {
+        return c.json([]);
+      }
+      return c.json(Array.isArray(data) ? data : []);
+    } catch {
+      return c.json([]);
+    }
   });
 
   app.get('/api/tickets', requireAuth, async (c) => {
