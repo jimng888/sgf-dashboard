@@ -32,6 +32,8 @@ Open **http://localhost:3851**. Sign in with a Google account listed in `ALLOWED
 
 On the dashboard, **Bot control** lets you turn the customer-facing bot **ON** or **OFF**. When OFF, any gateway that checks **GET /api/bot-enabled** will see `enabled: false` and can stop processing messages. See **[docs/BOT-24-7-AND-KILL-SWITCH.md](docs/BOT-24-7-AND-KILL-SWITCH.md)** for running the bot 24/7 on a cloud host and wiring the kill switch.
 
+**Bot not replying to WhatsApp or alerts not firing?** See **[docs/RUN-BOT-AND-ALERTS.md](docs/RUN-BOT-AND-ALERTS.md)** for the checklist (gateway, WhatsApp link, kill switch ON, watcher, cron).
+
 ## Deploy & troubleshoot
 
 See **[docs/deploy.md](docs/deploy.md)** for Railway, Cloudflare, and common fixes.
