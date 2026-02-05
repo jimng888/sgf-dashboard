@@ -40,9 +40,10 @@ Push to GitHub → Railway deploys → live at your subdomain.
 To host on Cloudflare so **push to Git** deploys:
 
 1. See **[docs/cloudflare-like-a-kid.md](cloudflare-like-a-kid.md)** for step-by-step (GitHub → Cloudflare → domain).
-2. **Build command** in Cloudflare: **`cd worker && npm ci && npx wrangler deploy`**  
-   The `worker/` directory has its own `package.json` with **only** Hono and EJS (no Express). The deploy runs from there, so the bundle cannot include `body-parser`/`iconv-lite`. After changing `views/` or `public/`, run `npm run build:worker` at repo root and commit the updated `worker/lib/` files.
-3. Optional: use **`npm run deploy:worker`** from repo root (same as the command above).
+2. **Build command:** **`cd worker && npm ci && npx wrangler deploy`** (this builds and deploys in one step).
+3. **Important:** If your project has a separate **"Deploy command"** or **"Build output directory"** that runs `npx wrangler deploy` from the repo root, **remove or clear it**. That second deploy uses the root app (with EJS) and overwrites the good Worker, then fails. You want only the build command above to run.
+4. Set **OPENCLAW_DASHBOARD_URL** (Worker secret) to your OpenClaw dashboard URL so the System status card can show Live/Down (e.g. `https://openclaw.yourdomain.com`).
+5. After changing `views/` or `public/`, run `npm run build:worker` at repo root and commit the updated `worker/lib/` files.
 
 ---
 

@@ -9,6 +9,14 @@ import { stylesCss, appJs } from './lib/static-embedded.mjs';
 const SESSION_COOKIE = 'connect.sid';
 const SESSION_MAX_AGE = 7 * 24 * 60 * 60; // 7 days in seconds
 
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 function getConfig(env) {
   return {
     google: {
@@ -28,7 +36,7 @@ function isAllowedEmail(env, email) {
 }
 
 function getSessionIdFromCookie(request) {
-  const cookie = request.header('Cookie') || '';
+  const cookie = request.headers.get('Cookie') || '';
   const match = cookie.match(new RegExp(`${SESSION_COOKIE}=([^;]+)`));
   return match ? decodeURIComponent(match[1].trim()) : null;
 }
@@ -70,13 +78,25 @@ function clearSessionCookie() {
 }
 
 async function fetchSystemStatus(configUrl) {
+  if (!configUrl || configUrl.startsWith('http://127.0.0.1') || configUrl.startsWith('http://localhost')) {
+    return { live: false, sessionsCount: null, message: 'Set OPENCLAW_DASHBOARD_URL to your OpenClaw dashboard URL (e.g. https://openclaw.example.com)' };
+  }
   try {
-    const res = await fetch(`${configUrl}/api/status`, { signal: AbortSignal.timeout(5000) });
-    const data = await res.json();
+    const res = await fetch(`${configUrl.replace(/\/$/, '')}/api/status`, { signal: AbortSignal.timeout(5000) });
+    const text = await res.text();
+    let data;
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch {
+      return { live: false, sessionsCount: null, message: 'OpenClaw returned an error or non-JSON response. Check URL and that OpenClaw is running.' };
+    }
+    if (!res.ok) {
+      return { live: false, sessionsCount: null, message: data?.message || `OpenClaw returned ${res.status}` };
+    }
     return {
       live: data.gateway?.reachable === true,
-      sessionsCount: data.sessionsCount,
-      message: data.gateway?.reachable ? 'Gateway reachable' : 'Gateway not reachable',
+      sessionsCount: data.sessionsCount ?? null,
+      message: data.gateway?.reachable ? 'Gateway reachable' : (data.message || 'Gateway not reachable'),
     };
   } catch (e) {
     return { live: false, sessionsCount: null, message: e.message || 'Could not reach OpenClaw dashboard' };
@@ -89,6 +109,15 @@ function render(name, data) {
 
 export function createWorkerApp() {
   const app = new Hono();
+
+  app.onError((err, c) => {
+    const message = err?.message || String(err);
+    return c.html(
+      `<h1>Error</h1><pre>${escapeHtml(message)}</pre><p>Check Worker logs in Cloudflare for details.</p>`,
+      500,
+      { 'Content-Type': 'text/html; charset=utf-8' }
+    );
+  });
 
   app.use('*', async (c, next) => {
     c.set('env', c.env);
