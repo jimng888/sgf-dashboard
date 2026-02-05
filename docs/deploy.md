@@ -42,7 +42,7 @@ To host on Cloudflare so **push to Git** deploys:
 1. See **[docs/cloudflare-like-a-kid.md](cloudflare-like-a-kid.md)** for step-by-step (GitHub → Cloudflare → domain).
 2. **Build command:** **`cd worker && npm ci && npx wrangler deploy`** (this builds and deploys in one step).
 3. **Important:** If your project has a separate **"Deploy command"** or **"Build output directory"** that runs `npx wrangler deploy` from the repo root, **remove or clear it**. That second deploy uses the root app (with EJS) and overwrites the good Worker, then fails. You want only the build command above to run.
-4. Set **OPENCLAW_DASHBOARD_URL** (Worker secret) to your OpenClaw dashboard URL so the System status card can show Live/Down (e.g. `https://openclaw.yourdomain.com`).
+4. **OPENCLAW_DASHBOARD_URL** (optional): Only set this if you run the OpenClaw dashboard elsewhere; then the System status card will show gateway/sessions. If unset, the card shows "Dashboard is live."
 5. After changing `views/` or `public/`, run `npm run build:worker` at repo root and commit the updated `worker/lib/` files.
 
 ---

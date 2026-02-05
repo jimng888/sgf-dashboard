@@ -62,8 +62,7 @@ cd /Users/jimng/.openclaw/workspace/team-dashboard/worker && npx wrangler deploy
    - **GOOGLE_CLIENT_SECRET** = (from Google Cloud Console)
    - **GOOGLE_CALLBACK_URL** = `https://sgf.bestmarketing.com.sg/auth/google/callback`
    - **ALLOWED_GOOGLE_EMAILS** = your Gmail address (or list of addresses, comma-separated)
-   - **OPENCLAW_DASHBOARD_URL** = the full URL of your OpenClaw dashboard (e.g. `https://openclaw.yourdomain.com`). If you leave this unset, the System status card will show “Set OPENCLAW_DASHBOARD_URL…” until you set it.
-
+   - **OPENCLAW_DASHBOARD_URL** = (optional) full URL of your OpenClaw dashboard if you run it elsewhere (e.g. https://openclaw.yourdomain.com). If unset, the status card shows "Dashboard is live"
 5. Save.
 
 ---

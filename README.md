@@ -26,7 +26,7 @@ Open **http://localhost:3851**. Sign in with a Google account listed in `ALLOWED
 | `SESSION_SECRET` | Yes | Random string, e.g. `openssl rand -hex 32` |
 | `PORT` | No | Default 3851 |
 | `GOOGLE_CALLBACK_URL` | Production | e.g. `https://internal.yourdomain.com/auth/google/callback` |
-| `OPENCLAW_DASHBOARD_URL` | No | For "System status"; default 127.0.0.1:3850 |
+| `OPENCLAW_DASHBOARD_URL` | No | If set, "System status" shows your OpenClaw gateway/sessions. If unset, the card shows "Dashboard is live." |
 
 ## Deploy & troubleshoot
 
