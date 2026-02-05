@@ -1,0 +1,3 @@
+# Railway: optional; Node is auto-detected from package.json. This makes start explicit.
+[deploy]
+startCommand = "npm start"

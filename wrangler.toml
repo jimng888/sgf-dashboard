@@ -1,0 +1,19 @@
+# Cloudflare Workers config for SGF Team Dashboard
+# 1. Run: npx wrangler d1 create sgf-dashboard-db
+# 2. Replace the database_id below with the one from the command output
+# 3. Run: npx wrangler d1 execute sgf-dashboard-db --remote --file=./schemas/d1-schema.sql
+
+name = "sgf-team-dashboard"
+main = "worker.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# D1 database (fill database_id after: npx wrangler d1 create sgf-dashboard-db)
+[[d1_databases]]
+binding = "DB"
+database_name = "sgf-dashboard-db"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+
+# Secrets: set via dashboard or: npx wrangler secret put GOOGLE_CLIENT_ID (etc.)
+# GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_CALLBACK_URL,
+# ALLOWED_GOOGLE_EMAILS, SESSION_SECRET
