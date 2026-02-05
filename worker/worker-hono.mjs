@@ -1,10 +1,9 @@
 /**
- * Cloudflare Worker using Hono (no Express). Google OAuth + D1 sessions + embedded EJS.
+ * Cloudflare Worker using Hono (no Express). Google OAuth + D1 sessions. No eval (EJS replaced with template literals).
  */
 import { Hono } from 'hono';
-import ejs from 'ejs';
 import { getOrCreateUser, listTickets, createTicket, assignTicket, updateTicketStatus, getUserById } from './lib/db-d1.mjs';
-import { login as loginTemplate, dashboard as dashboardTemplate } from './lib/views-embedded.mjs';
+import { renderLogin, renderDashboard } from './lib/views-render.mjs';
 import { stylesCss, appJs } from './lib/static-embedded.mjs';
 
 const SESSION_COOKIE = 'connect.sid';
@@ -85,8 +84,7 @@ async function fetchSystemStatus(configUrl) {
 }
 
 function render(name, data) {
-  const template = name === 'login' ? loginTemplate : dashboardTemplate;
-  return ejs.render(template, data);
+  return name === 'login' ? renderLogin(data) : renderDashboard(data);
 }
 
 export function createWorkerApp() {
