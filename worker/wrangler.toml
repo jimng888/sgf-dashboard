@@ -3,8 +3,15 @@ name = "sgf-dashboard"
 main = "worker.js"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
+workers_dev = true
 
 [[d1_databases]]
 binding = "DB"
 database_name = "sgf-dashboard-db"
 database_id = "6b51f2f4-ae87-49ee-bdd4-73b4a0ff0ce6"
+
+# Custom domain (so deploy keeps it)
+[[routes]]
+pattern = "sgf.bestmarketing.com.sg"
+zone_name = "bestmarketing.com.sg"
+custom_domain = true
