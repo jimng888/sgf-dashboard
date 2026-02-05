@@ -11,7 +11,7 @@ compatibility_flags = ["nodejs_compat"]
 # 2. Copy the database ID from the summary
 # 3. Uncomment the block below and paste the real database_id
 #
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "sgf-dashboard-db"
-# database_id = "your-real-uuid-here"
+ [[d1_databases]]
+ binding = "DB"
+ database_name = "sgf-dashboard-db"
+ database_id = "96adecc6-729e-4541-b4ef-0761d2776a62"
